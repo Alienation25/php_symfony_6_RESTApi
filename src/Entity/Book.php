@@ -10,52 +10,36 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
-
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['author','book'])]
-    private ?int $id = null;
+    private int $id;
 
-
-    //Назва. (Обов'язкове поле)
-    #[ORM\Column(length: 255,nullable: false)]
+    #[ORM\Column(type: Types::STRING, length: 255,nullable: false)]
     #[Groups(['author','book'])]
-    private ?string $title = null;
+    private string $title;
 
-
-    //Короткий опис. (Необов'язкове поле)
-    #[ORM\Column(type: Types::TEXT,nullable: true)]
+    #[ORM\Column(type: Types::STRING,length: 50,nullable: true)]
     #[Groups(['author','book'])]
-    private ?string $description = null;
+    private string $description;
 
-
-
-    // Зображення. (jpg або png, не більше 2 Мб, повинна зберігатися в окрему папку та мати унікальне ім'я файлу)
-    #[ORM\Column(type: 'string', length: 255,unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255,unique: true)]
     #[Assert\File(
         maxSize: '2M',
         mimeTypes: ['image/jpeg', 'image/png'],
-        mimeTypesMessage: 'Пожалуйста, загрузите изображение в формате jpg или png',
-        uploadErrorMessage: 'Ошибка при загрузке файла'
+        mimeTypesMessage: 'Please upload the image in jpg or png format',
+        uploadErrorMessage: 'Error uploading file'
     )]
     #[Groups(['author','book'])]
-    private ?string $image = null;
+    private string $image;
 
-
-
-    //Дата опублікування книги.
-    #[ORM\Column(type: 'datetime',nullable: true)]
-    #[Assert\DateTime]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE,nullable: true)]
     #[Groups(['author','book'])]
-    protected \DateTime $createdAt;
-
-
+    protected \DateTimeImmutable $publish;
 
     #[ORM\ManyToMany(targetEntity: Author::class, inversedBy: 'books')]
     #[Groups('book')]
@@ -71,16 +55,12 @@ class Book
         return $this->id;
     }
 
-
-    /**
-     * @return Collection<int, Author>
-     */
     public function getAuthors(): Collection
     {
         return $this->authors;
     }
 
-    public function addAuthor(Author $author): static
+    public function addAuthor(Author $author): self
     {
         if (!$this->authors->contains($author)) {
             $this->authors->add($author);
@@ -89,31 +69,21 @@ class Book
         return $this;
     }
 
-    public function removeAuthor(Author $author): static
+    public function removeAuthor(Author $author): self
     {
         $this->authors->removeElement($author);
 
         return $this;
     }
 
-
-
-
-
-
-
-
-
-
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(string $title): self
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -122,36 +92,31 @@ class Book
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImage(): string
     {
         return $this->image;
     }
 
-    public function setImage(string $image): static
+
+    public function setImage(string $image): void
     {
         $this->image = $image;
-
-        return $this;
     }
 
-    public function getCreatedAt(): \DateTime
+    public function getPublish(): \DateTimeImmutable
     {
-        return $this->createdAt;
+        return $this->publish;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): void
+    public function setPublish(\DateTimeImmutable $publish): void
     {
-        $this->createdAt = $createdAt;
+        $this->publish = $publish;
     }
-
-
-
-
 }

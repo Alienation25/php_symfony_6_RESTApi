@@ -22,39 +22,12 @@ class BookRepository extends ServiceEntityRepository
     }
 
 
-    public function getAll()
+    public function getAll():array
     {
-        //"SELECT book, author FROM App\Entity\Book author INNER JOIN book.authors book"
-        $qb = $this->createQueryBuilder('book')//SELECT book FROM App\Entity\Book as book
-            ->select('book','author') //SELECT book, author FROM App\Entity\Book as book
-            ->join('book.authors', 'author'); //SELECT book,author FROM App\Entity\Book book INNER JOIN book.authors book
-        //dd($qb->getDQL());
-        return $qb->getQuery()->getResult();
-
+        return $this->createQueryBuilder('book')
+            ->select('book','author')
+            ->leftJoin('book.authors', 'author')
+            ->getQuery()
+            ->getResult();
     }
-
-//    /**
-//     * @return Book[] Returns an array of Book objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('b')
-//            ->andWhere('b.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('b.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Book
-//    {
-//        return $this->createQueryBuilder('b')
-//            ->andWhere('b.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

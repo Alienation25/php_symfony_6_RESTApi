@@ -5,45 +5,35 @@ namespace App\Entity;
 use App\Repository\AuthorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-
-
 #[ORM\Entity(repositoryClass: AuthorRepository::class)]
 class Author
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['author','book'])]
-    private ?int $id = null;
+    private int $id;
 
-
-    // Прізвище (Обов'язкове поле, не коротше 3 символів)
-    #[ORM\Column(length: 255 ,nullable: false)]
+    #[ORM\Column(type: Types::STRING,length: 50,nullable: false)]
     #[Assert\Length(
         min: 3,
         minMessage: 'The nickname must contain at least {{ limit }} characters'
     )]
     #[Groups(['author','book'])]
-    private ?string $surname = null;
+    private string $surname;
 
-
-    //Им'я (Обов'язкове)
-    #[ORM\Column(length: 255,nullable: false)]
+    #[ORM\Column(type: Types::STRING,length: 50,nullable: false)]
     #[Groups(['author','book'])]
-    private ?string $firstname = null;
+    private string $firstname;
 
-
-    //По-батькові (Необов'язкове)
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::STRING,length: 50,nullable: true)]
     #[Groups(['author','book'])]
-    private ?string $middlename = null;
-
-
+    private string $patronymic;
 
     #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: 'authors')]
     #[Groups('author')]
@@ -54,16 +44,12 @@ class Author
         $this->books = new ArrayCollection();
     }
 
-
-    /**
-     * @return Collection<int, Book>
-     */
     public function getBooks(): Collection
     {
         return $this->books;
     }
 
-    public function addBook(Book $book): static
+    public function addBook(Book $book): self
     {
         if (!$this->books->contains($book)) {
             $this->books->add($book);
@@ -73,7 +59,7 @@ class Author
         return $this;
     }
 
-    public function removeBook(Book $book): static
+    public function removeBook(Book $book): self
     {
         if ($this->books->removeElement($book)) {
             $book->removeAuthor($this);
@@ -82,50 +68,41 @@ class Author
         return $this;
     }
 
-
-
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-
-    public function getSurname(): ?string
+    public function getSurname(): string
     {
         return $this->surname;
     }
 
-    public function setSurname(string $surname): static
+    public function setSurname(string $surname): self
     {
         $this->surname = $surname;
 
         return $this;
     }
 
-
-
-    public function getFirstname(): ?string
+    public function getFirstname(): string
     {
         return $this->firstname;
     }
 
-    public function setFirstname(?string $firstname): void
+    public function setFirstname(string $firstname): void
     {
         $this->firstname = $firstname;
     }
 
-    public function getMiddlename(): ?string
+    public function getPatronymic(): string
     {
-        return $this->middlename;
+        return $this->patronymic;
     }
 
-    public function setMiddlename(?string $middlename): void
+    public function setPatronymic(string $patronymic): void
     {
-        $this->middlename = $middlename;
+        $this->patronymic = $patronymic;
     }
-
-
-
-
 
 }
