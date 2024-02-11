@@ -19,17 +19,24 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class BookService extends AbstractController
 {
-    public function index(SerializerInterface $serializer ,BookRepository $bookRepository):Response
+    public function __construct(protected AuthorRepository $authorRepository,protected SerializerInterface $serializer,protected BookRepository $bookRepository,protected EntityManagerInterface $entityManager)
     {
-        $result=$bookRepository->getAll();
-        $jsonContent = $serializer->serialize($result,'json',['groups' => "book"]);
+
+    }
+    public function index(): Response
+    {
+        $result=$this->bookRepository->getAll();
+
+        $jsonContent = $this->serializer->serialize($result,'json',['groups' => "book"]);
+
         $response = new Response($jsonContent);
         $response->headers->set('Content-Type', 'application/json; charset=utf-8');
+
         return $response;
 
     }
 
-    public function create(AuthorRepository $authorRepository,EntityManagerInterface $entityManager,Request $request):JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $image =$request->files->get('image');
         $data=json_decode($request->get('json'),true);
@@ -43,7 +50,7 @@ class BookService extends AbstractController
         $book->setImage($fileName);
 
         foreach ($data["contents"]["book"]["authors"] as $data ) {
-            $author = $authorRepository->findOneBy([
+            $author = $this->authorRepository->findOneBy([
                 'surname'=>$data["surname"],
                 'firstname'=>$data["firstName"],
                 'patronymic'=>$data["patronymic"],
@@ -55,21 +62,23 @@ class BookService extends AbstractController
                 $author->setSurname($data["surname"]);
                 $author->setFirstName($data["firstName"]);
                 $author->setPatronymic($data["patronymic"]);
-                $entityManager->persist($author);
+                $this->entityManager->persist($author);
             }
 
             $book->addAuthor($author);
-
         }
-        $entityManager->persist($book);
-        $entityManager->flush();
+
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
         return $this->json(['message' => 'Book created']);
 
     }
 
-    public function show(BookRepository $bookRepository,int $id):JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $data = $bookRepository->find($id);
+        $data = $this->bookRepository->find($id);
+
         $jsonData = [
             'id' => $data->getId(),
             'title' => $data->getTitle(),
@@ -86,19 +95,24 @@ class BookService extends AbstractController
                 "patronymic"=>$author->getPatronymic(),
             ];
         }
+
         return $this->json($jsonData);
 
     }
 
-    public function update(EntityManagerInterface $entityManager,Request $request, BookRepository $bookRepository, int $id):JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
-        $book = $bookRepository->find($id);
+        $book = $this->bookRepository->find($id);
+
         $data = json_decode($request->getContent(), true);
+
         $book->setTitle($data['contents']['book']['title'] ?? $book->getTitle());
         $book->setDescription($data['contents']['book']['description'] ?? $book->getDescription());
         $book->setImage($data['contents']['book']['image'] ?? $book->getImage());
-        $entityManager->persist($book);
-        $entityManager->flush();
+
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
         return $this->json(['message' => 'Book update']);
     }
 }

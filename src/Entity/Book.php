@@ -19,7 +19,7 @@ class Book
     #[Groups(['author','book'])]
     private int $id;
 
-    #[ORM\Column(type: Types::STRING, length: 255,nullable: false)]
+    #[ORM\Column(type: Types::STRING, length: 50,nullable: false)]
     #[Groups(['author','book'])]
     private string $title;
 
@@ -27,7 +27,7 @@ class Book
     #[Groups(['author','book'])]
     private string $description;
 
-    #[ORM\Column(type: Types::STRING, length: 255,unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 50,unique: true)]
     #[Assert\File(
         maxSize: '2M',
         mimeTypes: ['image/jpeg', 'image/png'],
@@ -50,16 +50,26 @@ class Book
         $this->authors = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return Collection
+     */
     public function getAuthors(): Collection
     {
         return $this->authors;
     }
 
+    /**
+     * @param Author $author
+     * @return Author
+     */
     public function addAuthor(Author $author): self
     {
         if (!$this->authors->contains($author)) {
@@ -69,6 +79,10 @@ class Book
         return $this;
     }
 
+    /**
+     * @param Author $author
+     * @return Author
+     */
     public function removeAuthor(Author $author): self
     {
         $this->authors->removeElement($author);
@@ -76,22 +90,36 @@ class Book
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     * @return string
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * @param string $description
+     * @return string
+     */
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -99,22 +127,35 @@ class Book
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getImage(): string
     {
         return $this->image;
     }
 
-
+    /**
+     * @param string $image
+     * @return void
+     */
     public function setImage(string $image): void
     {
         $this->image = $image;
     }
 
+    /**
+     * @return \DateTimeImmutable
+     */
     public function getPublish(): \DateTimeImmutable
     {
         return $this->publish;
     }
 
+    /**
+     * @param \DateTimeImmutable $publish
+     * @return void
+     */
     public function setPublish(\DateTimeImmutable $publish): void
     {
         $this->publish = $publish;

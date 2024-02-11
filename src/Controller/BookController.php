@@ -23,26 +23,26 @@ class BookController extends AbstractController
     }
 
     #[Route('api/books', methods: ['GET'])]
-    public function indexBook(SerializerInterface $serializer ,BookRepository $bookRepository ):Response
+    public function indexBook(): Response
     {
-        return $this->bookService->index($serializer,$bookRepository);
+        return $this->bookService->index();
     }
 
     #[Route('api/book/create', methods: ['POST'])]
-    public function createBook(AuthorRepository $authorRepository,EntityManagerInterface $entityManager,Request $request): JsonResponse
+    public function createBook(Request $request): JsonResponse
     {
-        return $this->bookService->create($authorRepository,$entityManager,$request);
+        return $this->bookService->create($request);
     }
 
     #[Route('api/book/{id}', methods: ['GET'])]
-    public function showBook(BookRepository $bookRepository,int $id):JsonResponse
+    public function showBook(int $id): JsonResponse
     {
-       return $this->bookService->show($bookRepository,$id);
+       return $this->bookService->show($id);
     }
 
     #[Route('api/book/update/{id}',methods:['PUT'])]
-    public function updateBook(EntityManagerInterface $entityManager,Request $request, BookRepository $bookRepository, int $id) : JsonResponse
+    public function updateBook(Request $request, int $id): JsonResponse
     {
-        return  $this->bookService->update($entityManager,$request,$bookRepository,$id);
+        return  $this->bookService->update($request,$id);
     }
 }

@@ -22,12 +22,13 @@ class AuthorRepository extends ServiceEntityRepository
         parent::__construct($registry, Author::class);
     }
 
-    //"SELECT author, book FROM App\Entity\Author author INNER JOIN author.books book"
     public function getAll(): array
     {
-        return $this->createQueryBuilder('author')
-            ->select('author','book')
-            ->leftJoin('author.books', 'book')
-            ->getQuery()->getResult();
+        $qb = $this->createQueryBuilder('author');
+
+        $qb->select('author', 'book')
+            ->leftJoin('author.books', 'book');
+
+        return $qb->getQuery()->getResult();
     }
 }

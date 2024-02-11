@@ -44,11 +44,18 @@ class Author
         $this->books = new ArrayCollection();
     }
 
+    /**
+     * @return Collection
+     */
     public function getBooks(): Collection
     {
         return $this->books;
     }
 
+    /**
+     * @param Book $book
+     * @return Book
+     */
     public function addBook(Book $book): self
     {
         if (!$this->books->contains($book)) {
@@ -59,6 +66,10 @@ class Author
         return $this;
     }
 
+    /**
+     * @param Book $book
+     * @return Book
+     */
     public function removeBook(Book $book): self
     {
         if ($this->books->removeElement($book)) {
@@ -68,16 +79,26 @@ class Author
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getId(): int
     {
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function getSurname(): string
     {
         return $this->surname;
     }
 
+    /**
+     * @param string $surname
+     * @return $this
+     */
     public function setSurname(string $surname): self
     {
         $this->surname = $surname;
@@ -85,21 +106,35 @@ class Author
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getFirstname(): string
     {
         return $this->firstname;
     }
 
+    /**
+     * @param string $firstname
+     * @return void
+     */
     public function setFirstname(string $firstname): void
     {
         $this->firstname = $firstname;
     }
 
+    /**
+     * @return string
+     */
     public function getPatronymic(): string
     {
         return $this->patronymic;
     }
 
+    /**
+     * @param string $patronymic
+     * @return void
+     */
     public function setPatronymic(string $patronymic): void
     {
         $this->patronymic = $patronymic;

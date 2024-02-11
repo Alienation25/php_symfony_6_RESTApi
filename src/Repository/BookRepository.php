@@ -24,10 +24,11 @@ class BookRepository extends ServiceEntityRepository
 
     public function getAll():array
     {
-        return $this->createQueryBuilder('book')
-            ->select('book','author')
-            ->leftJoin('book.authors', 'author')
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('book');
+
+        $qb->select('book','author')
+                ->leftJoin('book.authors', 'author');
+
+        return $qb->getQuery()->getResult();
     }
 }
